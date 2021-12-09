@@ -8,19 +8,19 @@ const Navbar = () => {
     <nav className="navbar navbar-dark bg-dark">
       <span className="navbar-brand">Chat</span>
       <div>
-        {!user.estado ? (
-          <button
-            className="btn btn-outline-primary my-2 mx-2"
-            onClick={() => loginUser()}
-          >
-            Acceder
-          </button>
-        ) : (
+        {user.estado ? (
           <button
             className="btn btn-outline-danger my-2"
             onClick={() => logout()}
           >
             Cerrar Sesión
+          </button>
+        ) : (
+          <button
+            className="btn btn-outline-primary my-2 mx-2"
+            onClick={() => loginUser()}
+          >
+            Acceder
           </button>
         )}
       </div>

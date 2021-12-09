@@ -10,6 +10,7 @@ const ChatProvider = (props) => {
     estado: null,
   };
   const [user, setUser] = React.useState(dataUsuario);
+  const [messages, setMessages] = React.useState([]);
 
   React.useEffect(() => {
     detectarUsuario();
@@ -23,6 +24,7 @@ const ChatProvider = (props) => {
           email: user.email,
           estado: true,
         });
+        loadMessages();
       } else {
         setUser({
           uid: null,
@@ -51,8 +53,32 @@ const ChatProvider = (props) => {
     });
   };
 
+  const loadMessages = () => {
+    db.collection("chat")
+      .orderBy("fecha")
+      .onSnapshot((query) => {
+        // con el snapshot hacemos que los cambios se actualizen en tiempo real
+        const messagesArray = query.docs.map((item) => item.data());
+        setMessages(messagesArray);
+      });
+  };
+
+  const sendMessage = async (uidChat, text) => {
+    try {
+      await db.collection("chat").add({
+        fecha: Date.now(),
+        texto: text,
+        uid: uidChat,
+      });
+    } catch (error) {
+      console.error("Error al mandar un mensaje:", error);
+    }
+  };
+
   return (
-    <ChatContext.Provider value={{ user, loginUser, logout }}>
+    <ChatContext.Provider
+      value={{ user, loginUser, logout, messages, sendMessage }}
+    >
       {props.children}
     </ChatContext.Provider>
   );
